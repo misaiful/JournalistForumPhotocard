@@ -24,6 +24,9 @@
             background-repeat: no-repeat;
             position: relative;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            /* Add hints for the browser to prioritize image quality over speed */
+            image-rendering: -webkit-optimize-contrast; /* For Safari */
+            image-rendering: high-quality; /* Standard property to reduce blur */
         }
 
         /* The div where the user's uploaded photo will be shown */
@@ -249,8 +252,4 @@
     </script>
 </body>
 </html>
-
-
-
-
 
