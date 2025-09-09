@@ -17,16 +17,21 @@
         #photocard-container {
             aspect-ratio: 1 / 1;
             width: 100%;
-            max-width: 2000px; /* Or any max-width you prefer */
-            background-image: url('image_75e980.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            max-width: 600px; /* Or any max-width you prefer */
             position: relative;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            /* Add hints for the browser to prioritize image quality over speed */
-            image-rendering: -webkit-optimize-contrast; /* For Safari */
-            image-rendering: high-quality; /* Standard property to reduce blur */
+        }
+
+        /* Switched from background-image to an <img> tag for quality */
+        .photocard-frame-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Base layer */
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
         }
 
         /* The div where the user's uploaded photo will be shown */
@@ -142,6 +147,7 @@
             <!-- Preview Section -->
             <div class="flex justify-center items-center p-4">
                 <div id="photocard-container">
+                    <img src="image_75e980.png" alt="Photocard Frame" class="photocard-frame-img">
                     <div id="image-preview">
                         <span id="upload-placeholder">Your photo here</span>
                     </div>
