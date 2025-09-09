@@ -225,8 +225,8 @@
             const photocardContainer = document.getElementById('photocard-container');
             
             // Determine the optimal scale for rendering to ensure high quality.
-            // Use the device's pixel ratio for sharpness on mobile, but ensure a minimum scale of 3 for high resolution.
-            const scale = Math.max(3, window.devicePixelRatio || 1);
+            // Use the device's pixel ratio for sharpness on mobile, but ensure a minimum scale of 5 for very high resolution.
+            const scale = Math.max(5, window.devicePixelRatio || 1);
 
             // Use html2canvas to capture the photocard container
             html2canvas(photocardContainer, { scale: scale, useCORS: true, backgroundColor: null }).then(canvas => {
