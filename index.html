@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JKKNIU Journalist Forum Photocard Creator</title>
+    <title>Photocard Creator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,10 +29,10 @@
         /* The div where the user's uploaded photo will be shown */
         #image-preview {
             position: absolute;
-            top: 13.5%;
+            top: 7%;
             left: 5%;
             width: 90%;
-            height: 44%;
+            height: 48%;
             background-color: #ffffff;
             background-size: cover;
             background-position: center;
@@ -44,6 +44,7 @@
             font-size: 1rem;
             border-radius: 12px;
             overflow: hidden;
+            z-index: 1;
         }
 
         /* Positioning and styling for the overlay text elements */
@@ -54,11 +55,12 @@
             font-size: 1.25vw; /* Responsive font size */
             color: white;
             font-weight: 500;
+            z-index: 2;
         }
 
         #title-text-overlay {
             position: absolute;
-            bottom: 20%;
+            bottom: 22%;
             left: 0;
             width: 100%;
             text-align: center;
@@ -66,6 +68,8 @@
             color: white;
             font-weight: 700;
             line-height: 1.2;
+            font-family: 'Noto Serif Bengali', serif;
+            z-index: 2;
         }
 
         /* Media query for smaller screens to adjust font sizes */
@@ -194,7 +198,8 @@
         // 3. Font Control Listeners
         fontSizeSlider.addEventListener('input', (event) => {
             // We use 'vw' units to keep the font size responsive
-            titleTextOverlay.style.fontSize = `${event.target.value}vw`;
+            const newSize = window.innerWidth < 600 ? `${event.target.value}vw` : `${parseFloat(event.target.value) * 8}px`;
+            titleTextOverlay.style.fontSize = newSize;
         });
 
         lineHeightSlider.addEventListener('input', (event) => {
@@ -230,7 +235,22 @@
                 downloadBtn.disabled = false;
             });
         });
+
+        // Set initial font size based on screen size
+        function setInitialFontSize() {
+            const initialSliderValue = 3.5;
+            const newSize = window.innerWidth < 600 ? `${initialSliderValue}vw` : `${initialSliderValue * 8}px`;
+            titleTextOverlay.style.fontSize = newSize;
+        }
+
+        window.addEventListener('resize', setInitialFontSize);
+        document.addEventListener('DOMContentLoaded', setInitialFontSize);
     </script>
 </body>
 </html>
+
+
+
+
+
 
