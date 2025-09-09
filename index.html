@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JKKNIU Journalist Forum Photocard Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Serif+Bengali:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" xintegrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVBL5gI9kLmbG0C+wFjr8bCélDRcw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Serif Bengali', sans-serif;
+        }
+        /* Define the aspect ratio for the photocard container */
+        #photocard-container {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 600px; /* Or any max-width you prefer */
+            background-image: url('image_75e980.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* The div where the user's uploaded photo will be shown */
+        #image-preview {
+            position: absolute;
+            top: 13.5%;
+            left: 5%;
+            width: 90%;
+            height: 44%;
+            background-color: #ffffff;
+            background-size: cover;
+            background-position: center;
+            border: 1px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Positioning and styling for the overlay text elements */
+        #date-text-overlay {
+            position: absolute;
+            top: 3.5%;
+            right: 4%;
+            font-size: 1.25vw; /* Responsive font size */
+            color: white;
+            font-weight: 500;
+        }
+
+        #title-text-overlay {
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 3.5vw; /* Responsive font size */
+            color: white;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Media query for smaller screens to adjust font sizes */
+        @media (min-width: 600px) {
+            #date-text-overlay {
+                font-size: 14px;
+            }
+            #title-text-overlay {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+
+    <div class="container mx-auto p-4 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Photocard Creator</h1>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Create your personalized photocard. Upload a photo and edit the text.</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <!-- Controls Section -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md mx-auto">
+                <h2 class="text-2xl font-semibold mb-6 border-b pb-4 dark:border-gray-600">Customize Your Card</h2>
+                <div class="space-y-6">
+                    <!-- Photo Upload -->
+                    <div>
+                        <label for="photo-upload" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">1. Upload Your Photo</label>
+                        <input id="photo-upload" type="file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 dark:hover:file:bg-violet-900">
+                    </div>
+
+                    <!-- Text Inputs -->
+                    <div>
+                        <label for="date-text-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">2. Edit Date Text (Top Right)</label>
+                        <input type="text" id="date-text-input" value="০৯ সেপ্টেম্বর ২০২৮" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    </div>
+                    <div>
+                        <label for="title-text-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">3. Edit Main Title (শিরোনাম)</label>
+                        <input type="text" id="title-text-input" value="শিরোনাম" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2.5 focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    </div>
+
+                    <!-- Sliders for font control -->
+                    <div>
+                        <label for="font-size-slider" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">4. Adjust Font Size</label>
+                        <input type="range" id="font-size-slider" min="2" max="6" step="0.1" value="3.5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600">
+                    </div>
+                     <div>
+                        <label for="line-height-slider" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">5. Adjust Line Spacing</label>
+                        <input type="range" id="line-height-slider" min="0.8" max="2" step="0.1" value="1.2" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600">
+                    </div>
+                </div>
+
+                <!-- Download Button -->
+                <div class="mt-8">
+                     <button id="download-btn" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-violet-300 dark:focus:ring-violet-800">
+                        Download Photocard
+                    </button>
+                    <div id="loading-spinner" class="hidden justify-center items-center mt-4">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500"></div>
+                        <p class="ml-3">Generating your image...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="flex justify-center items-center p-4">
+                <div id="photocard-container">
+                    <div id="image-preview">
+                        <span id="upload-placeholder">Your photo here</span>
+                    </div>
+                    <div id="date-text-overlay">০৯ সেপ্টেম্বর ২০২৮</div>
+                    <div id="title-text-overlay">শিরোনাম</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get references to all the interactive elements
+        const photoUpload = document.getElementById('photo-upload');
+        const imagePreview = document.getElementById('image-preview');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        
+        const dateTextInput = document.getElementById('date-text-input');
+        const titleTextInput = document.getElementById('title-text-input');
+        
+        const dateTextOverlay = document.getElementById('date-text-overlay');
+        const titleTextOverlay = document.getElementById('title-text-overlay');
+        
+        const downloadBtn = document.getElementById('download-btn');
+        const loadingSpinner = document.getElementById('loading-spinner');
+
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const lineHeightSlider = document.getElementById('line-height-slider');
+
+
+        // --- Event Listeners for Live Updates ---
+
+        // 1. Photo Upload Listener
+        photoUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Set the background image of the preview div
+                    imagePreview.style.backgroundImage = `url('${e.target.result}')`;
+                    // Hide the placeholder text
+                    if(uploadPlaceholder) {
+                        uploadPlaceholder.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 2. Text Input Listeners
+        dateTextInput.addEventListener('input', (event) => {
+            dateTextOverlay.textContent = event.target.value;
+        });
+
+        titleTextInput.addEventListener('input', (event) => {
+            titleTextOverlay.textContent = event.target.value;
+        });
+
+        // 3. Font Control Listeners
+        fontSizeSlider.addEventListener('input', (event) => {
+            // We use 'vw' units to keep the font size responsive
+            titleTextOverlay.style.fontSize = `${event.target.value}vw`;
+        });
+
+        lineHeightSlider.addEventListener('input', (event) => {
+            titleTextOverlay.style.lineHeight = event.target.value;
+        });
+
+
+        // 4. Download Button Listener
+        downloadBtn.addEventListener('click', () => {
+            loadingSpinner.style.display = 'flex';
+            downloadBtn.disabled = true;
+
+            const photocardContainer = document.getElementById('photocard-container');
+            
+            // Use html2canvas to capture the photocard container
+            // The scale option increases the resolution of the output image
+            html2canvas(photocardContainer, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
+                // Create a temporary link element
+                const link = document.createElement('a');
+                link.download = 'photocard.png';
+                link.href = canvas.toDataURL('image/png');
+                
+                // Trigger the download
+                link.click();
+
+                // Hide spinner and re-enable button
+                loadingSpinner.style.display = 'none';
+                downloadBtn.disabled = false;
+            }).catch(err => {
+                console.error('Oops, something went wrong!', err);
+                alert('Could not generate the image. Please try again.');
+                loadingSpinner.style.display = 'none';
+                downloadBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
+
