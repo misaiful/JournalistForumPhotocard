@@ -30,6 +30,7 @@
             width: 100%;
             height: 100%;
             z-index: 0; /* Base layer */
+            pointer-events: none; /* Make sure it doesn't interfere with dragging */
             image-rendering: -webkit-optimize-contrast;
             image-rendering: high-quality;
         }
@@ -40,10 +41,8 @@
             top: 10%;
             left: 5%;
             width: 90%;
-            height: 48%;
+            height: 54%; /* Increased photo height */
             background-color: #ffffff;
-            background-size: cover;
-            background-position: center;
             border: 1px dashed #ccc;
             display: flex;
             align-items: center;
@@ -54,6 +53,14 @@
             overflow: hidden;
             z-index: 1;
             box-shadow: 0 0 0 2px white; /* Added 2px white stroke */
+        }
+
+        #uploaded-image {
+            position: relative; /* Changed from absolute for easier logic */
+            cursor: move;
+            display: none; /* Hidden until an image is uploaded */
+            width: 100%; /* Default size, will be adjusted on load */
+            height: auto;
         }
 
         /* Positioning and styling for the overlay text elements */
@@ -69,7 +76,7 @@
 
         #title-text-overlay {
             position: absolute;
-            top: 62%; /* Positioned 4% below the image preview */
+            top: 68%; /* Positioned below the new, larger image preview */
             left: 0;
             width: 100%;
             text-align: center;
@@ -107,7 +114,7 @@
                 <div class="space-y-6">
                     <!-- Photo Upload -->
                     <div>
-                        <label for="photo-upload" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">1. Upload Your Photo</label>
+                        <label for="photo-upload" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">1. Upload & Position Photo</label>
                         <input id="photo-upload" type="file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 dark:file:bg-violet-900/50 dark:file:text-violet-300 dark:hover:file:bg-violet-900">
                     </div>
 
@@ -150,6 +157,7 @@
                     <img src="image_75e980.png" alt="Photocard Frame" class="photocard-frame-img">
                     <div id="image-preview">
                         <span id="upload-placeholder">Your photo here</span>
+                        <img id="uploaded-image" src="" alt="User uploaded photo">
                     </div>
                     <div id="date-text-overlay">০৯ সেপ্টেম্বর ২০২৮</div>
                     <div id="title-text-overlay">শিরোনাম</div>
@@ -161,7 +169,8 @@
     <script>
         // Get references to all the interactive elements
         const photoUpload = document.getElementById('photo-upload');
-        const imagePreview = document.getElementById('image-preview');
+        const imagePreviewContainer = document.getElementById('image-preview');
+        const uploadedImage = document.getElementById('uploaded-image');
         const uploadPlaceholder = document.getElementById('upload-placeholder');
         
         const dateTextInput = document.getElementById('date-text-input');
@@ -185,12 +194,13 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    // Set the background image of the preview div
-                    imagePreview.style.backgroundImage = `url('${e.target.result}')`;
-                    // Hide the placeholder text
-                    if(uploadPlaceholder) {
-                        uploadPlaceholder.style.display = 'none';
-                    }
+                    uploadedImage.src = e.target.result;
+                    uploadedImage.style.display = 'block';
+                    if(uploadPlaceholder) uploadPlaceholder.style.display = 'none';
+                    
+                    // Reset image position on new upload
+                    uploadedImage.style.left = '0px';
+                    uploadedImage.style.top = '0px';
                 };
                 reader.readAsDataURL(file);
             }
@@ -207,7 +217,6 @@
 
         // 3. Font Control Listeners
         fontSizeSlider.addEventListener('input', (event) => {
-            // We use 'vw' units to keep the font size responsive
             const newSize = window.innerWidth < 600 ? `${event.target.value}vw` : `${parseFloat(event.target.value) * 8}px`;
             titleTextOverlay.style.fontSize = newSize;
         });
@@ -215,6 +224,64 @@
         lineHeightSlider.addEventListener('input', (event) => {
             titleTextOverlay.style.lineHeight = event.target.value;
         });
+
+        // --- Drag and Move Logic ---
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        function startDrag(e) {
+            e.preventDefault();
+            isDragging = true;
+            
+            const event = e.touches ? e.touches[0] : e;
+            startX = event.clientX;
+            startY = event.clientY;
+            
+            initialLeft = uploadedImage.offsetLeft;
+            initialTop = uploadedImage.offsetTop;
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const event = e.touches ? e.touches[0] : e;
+            const dx = event.clientX - startX;
+            const dy = event.clientY - startY;
+
+            let newLeft = initialLeft + dx;
+            let newTop = initialTop + dy;
+            
+            // Boundary checks
+            const container = imagePreviewContainer;
+            const image = uploadedImage;
+            const maxLeft = 0;
+            const minLeft = container.clientWidth - image.clientWidth;
+            const maxTop = 0;
+            const minTop = container.clientHeight - image.clientHeight;
+
+            newLeft = Math.max(minLeft, Math.min(maxLeft, newLeft));
+            newTop = Math.max(minTop, Math.min(maxTop, newTop));
+
+            image.style.left = `${newLeft}px`;
+            image.style.top = `${newTop}px`;
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', stopDrag);
+        }
+
+        uploadedImage.addEventListener('mousedown', startDrag);
+        uploadedImage.addEventListener('touchstart', startDrag);
 
 
         // 4. Download Button Listener
@@ -224,21 +291,16 @@
 
             const photocardContainer = document.getElementById('photocard-container');
             
-            // Determine the optimal scale for rendering to ensure high quality.
-            // Use the device's pixel ratio for sharpness on mobile, but ensure a minimum scale of 5 for very high resolution.
-            const scale = Math.max(5, window.devicePixelRatio || 1);
+            // Increased scale for ultra high resolution (approx 5000px+ from a 600px container)
+            const scale = Math.max(8.5, window.devicePixelRatio || 1);
 
-            // Use html2canvas to capture the photocard container
             html2canvas(photocardContainer, { scale: scale, useCORS: true, backgroundColor: null }).then(canvas => {
-                // Create a temporary link element
                 const link = document.createElement('a');
-                link.download = 'photocard.jpg'; // Changed to .jpg
-                link.href = canvas.toDataURL('image/jpeg', 0.95); // Changed to JPG format with high quality
+                link.download = 'photocard.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 1.0); // Use highest JPG quality
                 
-                // Trigger the download
                 link.click();
 
-                // Hide spinner and re-enable button
                 loadingSpinner.style.display = 'none';
                 downloadBtn.disabled = false;
             }).catch(err => {
