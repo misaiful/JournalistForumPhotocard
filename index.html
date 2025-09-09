@@ -29,7 +29,7 @@
         /* The div where the user's uploaded photo will be shown */
         #image-preview {
             position: absolute;
-            top: 9%;
+            top: 10%;
             left: 5%;
             width: 90%;
             height: 48%;
@@ -45,6 +45,7 @@
             border-radius: 12px;
             overflow: hidden;
             z-index: 1;
+            box-shadow: 0 0 0 2px white; /* Added 2px white stroke */
         }
 
         /* Positioning and styling for the overlay text elements */
@@ -60,7 +61,7 @@
 
         #title-text-overlay {
             position: absolute;
-            bottom: 22%;
+            top: 62%; /* Positioned 4% below the image preview */
             left: 0;
             width: 100%;
             text-align: center;
@@ -248,4 +249,8 @@
     </script>
 </body>
 </html>
+
+
+
+
 
