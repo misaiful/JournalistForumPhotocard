@@ -56,7 +56,7 @@
             position: absolute;
             top: 2.5%;
             right: 4%;
-            font-size: 1.25vw; /* Responsive font size */
+            font-size: 1.5vw; /* Responsive font size - Increased */
             color: white;
             font-weight: 500;
             z-index: 2;
@@ -79,7 +79,7 @@
         /* Media query for smaller screens to adjust font sizes */
         @media (min-width: 600px) {
             #date-text-overlay {
-                font-size: 14px;
+                font-size: 16px; /* Increased from 14px */
             }
             #title-text-overlay {
                 font-size: 28px;
@@ -223,8 +223,8 @@
             html2canvas(photocardContainer, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
                 // Create a temporary link element
                 const link = document.createElement('a');
-                link.download = 'photocard.png';
-                link.href = canvas.toDataURL('image/png');
+                link.download = 'photocard.jpg'; // Changed to .jpg
+                link.href = canvas.toDataURL('image/jpeg', 0.95); // Changed to JPG format with high quality
                 
                 // Trigger the download
                 link.click();
