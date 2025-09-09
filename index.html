@@ -77,7 +77,7 @@
         }
 
         /* Media query for smaller screens to adjust font sizes */
-        @media (min-width: 2000px) {
+        @media (min-width: 600px) {
             #date-text-overlay {
                 font-size: 16px; /* Increased from 14px */
             }
@@ -218,9 +218,12 @@
 
             const photocardContainer = document.getElementById('photocard-container');
             
+            // Determine the optimal scale for rendering to ensure high quality.
+            // Use the device's pixel ratio for sharpness on mobile, but ensure a minimum scale of 3 for high resolution.
+            const scale = Math.max(3, window.devicePixelRatio || 1);
+
             // Use html2canvas to capture the photocard container
-            // The scale option increases the resolution of the output image
-            html2canvas(photocardContainer, { scale: 3, useCORS: true, backgroundColor: null }).then(canvas => {
+            html2canvas(photocardContainer, { scale: scale, useCORS: true, backgroundColor: null }).then(canvas => {
                 // Create a temporary link element
                 const link = document.createElement('a');
                 link.download = 'photocard.jpg'; // Changed to .jpg
